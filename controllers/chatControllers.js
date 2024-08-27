@@ -270,6 +270,8 @@ const deleteGroup = async (req, res) => {
   const deletedDoc = await ChatModel.findByIdAndDelete(chatId);
 
   if (deletedDoc !== null) {
+    // Deleting all messages where the 'chat' field matches the provided chatId
+    const result = await MessageModel.deleteMany({ chat: chatId });
     res.status(200).send(deletedDoc);
   } else {
     res.status(500).send("Group Could not be deleted");
