@@ -63,8 +63,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
       //Sending the token to the browser.
       res.cookie("token", actualToken, {
-        // sameSite: "None", // Set SameSite to None for cross-origin requests
-        // secure: false,
+        httpOnly: true, // Secure against XSS attacks
+        sameSite: "None", // Required for cross-origin requests
+        secure: process.env.NODE_ENV === "production", // Use HTTPS in production
       });
 
       res.status(201).json(doc);
@@ -91,7 +92,11 @@ const authUser = asyncHandler(async (req, res) => {
       const actualToken = generateToken(userExists._id);
 
       //Sending the token to the browser.
-      res.cookie("token", actualToken);
+      res.cookie("token", actualToken, {
+        httpOnly: true, // Secure against XSS attacks
+        sameSite: "None", // Required for cross-origin requests
+        secure: process.env.NODE_ENV === "production", // Use HTTPS in production
+      });
 
       res.status(201).send(userExists);
     } else {
@@ -111,7 +116,11 @@ const guestUser = asyncHandler(async (req, res) => {
   const actualToken = generateToken(guestUserAcc._id);
 
   //Sending the token to the browser.
-  res.cookie("token", actualToken);
+  res.cookie("token", actualToken, {
+    httpOnly: true, // Secure against XSS attacks
+    sameSite: "None", // Required for cross-origin requests
+    secure: process.env.NODE_ENV === "production", // Use HTTPS in production
+  });
 
   if (guestUserAcc !== null) {
     //Its a valid guest email
